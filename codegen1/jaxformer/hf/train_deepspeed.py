@@ -29,7 +29,7 @@ import torch
 from transformers import AutoConfig, AutoModelForCausalLM
 
 import deepspeed
-
+from jaxformer.hf.codegen.modeling_codegen import CodeGenModel as CodegenModel
 
 ########################################################################################################
 ## args
@@ -97,7 +97,10 @@ def train(args):
     config.gradient_checkpointing = True
     config.use_cache = False
 
-    model = AutoModelForCausalLM.from_pretrained(args.model, config=config)
+    #model = AutoModelForCausalLM.from_pretrained(args.model, config=config)
+    # Use our own model class to avoid the extra forward pass in the forward method.
+    # Not pre-trained, but that's fine for this minimal example.
+    model = CodegenModel()
 
     model.train()
     # TODO(enijkamp): we need to set this flag twice?
